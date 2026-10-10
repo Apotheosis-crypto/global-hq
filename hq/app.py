@@ -92,10 +92,13 @@ def maybe_send_briefing(db, cfg, src, now=None):
     return True
 
 
-DASHBOARD = (Path(__file__).parent / "dashboard.html")
+DASHBOARD = Path(__file__).parent / "dashboard.html"
+STATIC = Path(__file__).parent / "static"
+TYPES = {".js": "application/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".png": "image/png"}
 
 
-def serve(db, cfg, src):
+def serve(db, cfg, src, host="127.0.0.1", on_sweep=None):
+    """Serve the dashboard locally. Bound to this computer only, never the network."""
     sources = source_index(src)
 
     class H(BaseHTTPRequestHandler):
@@ -115,12 +118,22 @@ def serve(db, cfg, src):
                     return self._send(briefing.build(db, sources, tz=cfg["briefing"]["timezone"])[2], "text/html")
             if self.path in ("/", "/index.html"):
                 return self._send(DASHBOARD.read_bytes(), "text/html")
+            if self.path.startswith("/static/"):
+                f = STATIC / Path(self.path[len("/static/"):]).name  # no directory traversal
+                if f.is_file():
+                    return self._send(f.read_bytes(), TYPES.get(f.suffix, "application/octet-stream"))
+            self.send_error(404)
+
+        def do_POST(self):
+            if self.path == "/api/sweep" and on_sweep:
+                threading.Thread(target=on_sweep, daemon=True).start()
+                return self._send(json.dumps({"ok": True}))
             self.send_error(404)
 
         def log_message(self, *a):
             pass
 
-    srv = ThreadingHTTPServer(("0.0.0.0", cfg["port"]), H)
+    srv = ThreadingHTTPServer((host, cfg["port"]), H)
     print(f"Global HQ dashboard on http://localhost:{cfg['port']}")
     srv.serve_forever()
 
@@ -129,7 +142,9 @@ def api_payloads(db, cfg, sources):
     events = briefing.gather(db, sources, hours=48, limit=80)
     health = [dict(r, name=sources.get(r["source_id"], {}).get("name"), tier=sources.get(r["source_id"], {}).get("tier", 0))
               for r in db.execute("SELECT * FROM health ORDER BY source_id")]
-    return {"events": events, "config": {"briefing": cfg["briefing"], "threshold": cfg["alerts"]["threshold"]}}, health
+    last = max((r["at"] for r in health), default=None)
+    return {"events": events, "generated_at": last, "live": bool(cfg.get("live")),
+            "config": {"briefing": cfg["briefing"], "threshold": cfg["alerts"]["threshold"], "poll_minutes": cfg["poll_minutes"]}}, health
 
 
 def export(db, cfg, src, out):
@@ -143,11 +158,52 @@ def export(db, cfg, src, out):
     (out / "api" / "health.json").write_text(json.dumps(health))
     (out / "briefing" / "index.html").write_text(briefing.build(db, sources, tz=cfg["briefing"]["timezone"])[2])
     (out / "index.html").write_bytes(DASHBOARD.read_bytes())
+    (out / "static").mkdir(exist_ok=True)
+    for f in STATIC.iterdir():
+        (out / "static" / f.name).write_bytes(f.read_bytes())
     archive = ROOT / "briefings"
     if archive.exists():
         (out / "archive").mkdir(exist_ok=True)
         for f in archive.glob("*.html"):
             (out / "archive" / f.name).write_text(f.read_text())
+
+
+def sweep(db, cfg, src):
+    try:
+        fired = cycle(db, cfg, src)
+        print(f"{datetime.now(timezone.utc):%H:%M:%S} sweep complete, {len(fired)} alert(s)")
+        maybe_send_briefing(db, cfg, src)
+    except Exception as e:  # noqa: BLE001 - keep the watch running
+        print("cycle error:", e)
+
+
+def watch(db, cfg, src):
+    """Sweep forever, and serve the dashboard (with a working "Sweep now" button) alongside."""
+    cfg["live"] = True
+    threading.Thread(target=serve, args=(db, cfg, src), kwargs={"on_sweep": lambda: sweep(db, cfg, src)}, daemon=True).start()
+    while True:
+        sweep(db, cfg, src)
+        time.sleep(cfg["poll_minutes"] * 60)
+
+
+def seed_sample(db, src):
+    """Load real headlines from 9 Oct 2026 so the dashboard can be previewed offline."""
+    items = json.loads((ROOT / "tests" / "fixtures" / "live_sample.json").read_text())
+    verified = {s["id"] for s in src["sources"]}
+    now = datetime.now(timezone.utc)
+    newest = max(i["published"] for i in items)
+    shift = now - datetime.fromisoformat(newest)  # make the sample look current
+    for i in items:
+        i["id"] = feeds.item_id(i["url"], i["title"])
+        i["published"] = (datetime.fromisoformat(i["published"]) + shift).isoformat()
+        i.update(i.pop("extra"))
+        store.save_items(db, [i], i["source_id"] in verified)
+    for s in src["sources"] + src["discovery"]:
+        store.record_health(db, s["id"], None, sum(1 for i in items if i["source_id"] == s["id"]), now.isoformat())
+    for ev in engine.rebuild(db, source_index(src), now=now):
+        if ev["score"] >= 70 and (ev["sources"] >= 2 or ev["tier1"]):
+            db.execute("UPDATE events SET alerted=1 WHERE id=?", (ev["id"],))
+    db.commit()
 
 
 def run(cfg, src, once=False):
@@ -157,12 +213,4 @@ def run(cfg, src, once=False):
         sent = maybe_send_briefing(db, cfg, src)
         print(f"cycle done, {len(fired)} alert(s){', briefing sent' if sent else ''}")
         return db
-    threading.Thread(target=serve, args=(db, cfg, src), daemon=True).start()
-    while True:
-        try:
-            fired = cycle(db, cfg, src)
-            print(f"{datetime.now(timezone.utc):%H:%M:%S} sweep complete, {len(fired)} alert(s)")
-            maybe_send_briefing(db, cfg, src)
-        except Exception as e:  # noqa: BLE001 - keep the watch running
-            print("cycle error:", e)
-        time.sleep(cfg["poll_minutes"] * 60)
+    watch(db, cfg, src)

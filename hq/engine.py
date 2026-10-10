@@ -22,7 +22,7 @@ SIGNALS = [
     ("Nuclear / WMD", 55, r"\bnuclear (test|strike|attack|weapon)|chemical weapon|radiation leak|dirty bomb"),
     ("Conflict",      50, r"\bcoup\b|assassinat|declares? war|invasion|invades?|martial law"),
     ("Conflict",      40, r"airstrike|air strike|missile|shelling|offensive|bombing|drone strike|troops|ceasefire (collapse|violat)"),
-    ("Conflict",      30, r"\battack|\bclashes?\b|militants?|insurgen|hostages?|terror"),
+    ("Conflict",      30, r"\battack|\bclashes?\b|militants?|insurgen|hostages?|terror|\bwar\b|violence|riots?|looted"),
     ("Disaster",      35, r"earthquake|tsunami|cyclone|hurricane|typhoon|volcan|flood|wildfire|landslide|famine"),
     ("Health",        40, r"pandemic|public health emergency|pheic|outbreak|epidemic|ebola|cholera|mpox|h5n1"),
     ("Diplomacy",     30, r"security council|ceasefire|peace (deal|talks|agreement)|treaty|sanctions|summit|expel+s? (diplomat|ambassador)"),

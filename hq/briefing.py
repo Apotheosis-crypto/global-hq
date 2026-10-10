@@ -4,6 +4,8 @@ import json
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
+from . import geo
+
 REGION_ORDER = ["Global", "Europe", "Middle East", "Africa", "Asia", "Americas", "Oceania"]
 
 
@@ -16,6 +18,8 @@ def gather(db, sources, now=None, hours=24, limit=25):
         e["reasons"] = json.loads(e["reasons"])
         e["evidence"] = [dict(i, source_name=sources.get(i["source_id"], {}).get("name", i["source_id"]))
                          for i in db.execute("SELECT * FROM items WHERE event_id=? AND verified=1 ORDER BY published", (e["id"],))]
+        body = " ".join(i["title"] + " " + (i["summary"] or "") for i in e["evidence"])
+        e["geo"] = geo.locate(e["headline"], body, [json.loads(i["extra"] or "{}") for i in e["evidence"]])
     return events
 
 

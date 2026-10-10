@@ -70,7 +70,16 @@ def parse_xml(raw, source):
         if not title:
             continue
         url = _text(e, "link", "guid", "id").strip()
-        out.append({
+        geo = {}
+        lat, lon = _text(e, "lat"), _text(e, "long")  # W3C geo (GDACS)
+        if not lat:
+            pt = _text(e, "point").split()  # GeoRSS
+            lat, lon = (pt + ["", ""])[:2]
+        try:
+            geo = {"lat": round(float(lat), 3), "lon": round(float(lon), 3)}
+        except ValueError:
+            pass
+        out.append({**geo,
             "id": item_id(url, title),
             "source_id": source["id"],
             "title": title,
@@ -85,13 +94,14 @@ def parse_usgs(raw, source):
     out = []
     for f in json.loads(raw).get("features", []):
         p = f["properties"]
+        lon, lat = (f.get("geometry") or {}).get("coordinates", [None, None])[:2]
         ts = datetime.fromtimestamp(p["time"] / 1000, timezone.utc)
         title = f"M{p.get('mag')} earthquake - {p.get('place')}"
         out.append({
             "id": item_id(p.get("url"), title), "source_id": source["id"], "title": title,
             "summary": f"Tsunami flag: {p.get('tsunami')}. PAGER alert: {p.get('alert') or 'none'}. Felt reports: {p.get('felt') or 0}.",
             "url": p.get("url"), "published": ts.isoformat(), "magnitude": p.get("mag"),
-            "pager": p.get("alert"),
+            "pager": p.get("alert"), "lat": lat, "lon": lon, "place": p.get("place"),
         })
     return out
 
