@@ -4,6 +4,7 @@ import hashlib
 import html
 import json
 import re
+import ssl
 import urllib.request
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
@@ -12,9 +13,22 @@ UA = "GlobalHQ/0.1 (+news aggregation prototype)"
 TAG_RE = re.compile(r"<[^>]+>")
 
 
+def _ssl_context():
+    # Python from python.org on macOS ships without root certificates until "Install Certificates"
+    # is run, which makes every HTTPS feed fail. certifi's bundle (installed by the launchers) fixes that.
+    try:
+        import certifi
+        return ssl.create_default_context(cafile=certifi.where())
+    except ImportError:
+        return ssl.create_default_context()
+
+
+SSL_CONTEXT = _ssl_context()
+
+
 def fetch(url, timeout=20):
     req = urllib.request.Request(url, headers={"User-Agent": UA})
-    with urllib.request.urlopen(req, timeout=timeout) as r:
+    with urllib.request.urlopen(req, timeout=timeout, context=SSL_CONTEXT) as r:
         return r.read()
 
 
