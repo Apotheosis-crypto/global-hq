@@ -20,6 +20,8 @@ def send(cfg, subject, body, html_body=None, urgent=False):
                 print(f"\n=== {subject} ===\n{body}\n")
             elif ch == "ntfy":
                 n = cfg["ntfy"]
+                if not n["topic"] or n["topic"].startswith("CHANGE-ME"):
+                    raise ValueError("no ntfy topic configured, skipping")  # never post to the shared placeholder topic
                 _post(f"{n['server'].rstrip('/')}/{n['topic']}", body.encode(),
                       {"Title": subject.encode("ascii", "ignore").decode(), "Priority": "urgent" if urgent else "default", "Tags": "globe_with_meridians"})
             elif ch == "email":

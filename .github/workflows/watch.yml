@@ -70,9 +70,12 @@ jobs:
       - name: Build dashboard
         run: python -m hq export --out site
 
+      # Pages steps don't fail the run before Pages is switched on (Settings > Pages > GitHub Actions).
       - uses: actions/upload-pages-artifact@v3
+        continue-on-error: true
         with:
           path: site
 
       - id: deploy
         uses: actions/deploy-pages@v4
+        continue-on-error: true
