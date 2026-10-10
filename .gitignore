@@ -1,0 +1,5 @@
+config.json
+hq.db
+briefings/
+__pycache__/
+site/

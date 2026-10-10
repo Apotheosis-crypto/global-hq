@@ -1,0 +1,30 @@
+{
+  "_comment": "Verified sources only. tier 1 = official / intergovernmental / scientific agencies; tier 2 = wire services and established international newsrooms with public corrections policies. Discovery feeds (GDELT) are never treated as evidence on their own.",
+  "sources": [
+    {"id": "un-news",      "name": "UN News",                   "tier": 1, "kind": "rss",     "region": "Global",   "url": "https://news.un.org/feed/subscribe/en/news/all/rss.xml"},
+    {"id": "un-press",     "name": "UN Meetings Coverage",      "tier": 1, "kind": "rss",     "region": "Global",   "url": "https://press.un.org/en/rss.xml"},
+    {"id": "who",          "name": "WHO Disease Outbreak News", "tier": 1, "kind": "rss",     "region": "Global",   "url": "https://www.who.int/feeds/entity/csr/don/en/rss.xml"},
+    {"id": "reliefweb",    "name": "ReliefWeb (OCHA)",          "tier": 1, "kind": "rss",     "region": "Global",   "url": "https://reliefweb.int/updates/rss.xml"},
+    {"id": "gdacs",        "name": "GDACS Disaster Alerts",     "tier": 1, "kind": "rss",     "region": "Global",   "url": "https://www.gdacs.org/xml/rss.xml"},
+    {"id": "usgs",         "name": "USGS Significant Quakes",   "tier": 1, "kind": "geojson", "region": "Global",   "url": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.geojson"},
+    {"id": "us-state",     "name": "US State Department",       "tier": 1, "kind": "rss",     "region": "Americas", "url": "https://www.state.gov/rss-feed/press-releases/feed/"},
+    {"id": "uk-fcdo",      "name": "UK Foreign Office",         "tier": 1, "kind": "atom",    "region": "Europe",   "url": "https://www.gov.uk/government/organisations/foreign-commonwealth-development-office.atom"},
+    {"id": "nato",         "name": "NATO News",                 "tier": 1, "kind": "rss",     "region": "Europe",   "url": "https://www.nato.int/cps/rss/en/natohq/rssFeed.xsl/rssFeed.xml"},
+    {"id": "eu-council",   "name": "Council of the EU",         "tier": 1, "kind": "rss",     "region": "Europe",   "url": "https://www.consilium.europa.eu/en/rss/pressreleases.ashx"},
+
+    {"id": "bbc-world",    "name": "BBC World",                 "tier": 2, "kind": "rss",     "region": "Global",   "url": "https://feeds.bbci.co.uk/news/world/rss.xml"},
+    {"id": "aljazeera",    "name": "Al Jazeera",                "tier": 2, "kind": "rss",     "region": "Middle East", "url": "https://www.aljazeera.com/xml/rss/all.xml"},
+    {"id": "guardian",     "name": "The Guardian World",        "tier": 2, "kind": "rss",     "region": "Global",   "url": "https://www.theguardian.com/world/rss"},
+    {"id": "france24",     "name": "France 24",                 "tier": 2, "kind": "rss",     "region": "Europe",   "url": "https://www.france24.com/en/rss"},
+    {"id": "dw",           "name": "Deutsche Welle",            "tier": 2, "kind": "rss",     "region": "Europe",   "url": "https://rss.dw.com/rdf/rss-en-world"},
+    {"id": "npr-world",    "name": "NPR World",                 "tier": 2, "kind": "rss",     "region": "Americas", "url": "https://feeds.npr.org/1004/rss.xml"},
+    {"id": "nhk",          "name": "NHK World",                 "tier": 2, "kind": "rss",     "region": "Asia",     "url": "https://www3.nhk.or.jp/nhkworld/en/news/feeds/"},
+    {"id": "scmp",         "name": "South China Morning Post",  "tier": 2, "kind": "rss",     "region": "Asia",     "url": "https://www.scmp.com/rss/91/feed"},
+    {"id": "africanews",   "name": "Africanews",                "tier": 2, "kind": "rss",     "region": "Africa",   "url": "https://www.africanews.com/feed/rss"},
+    {"id": "mercopress",   "name": "MercoPress",                "tier": 2, "kind": "rss",     "region": "Americas", "url": "https://en.mercopress.com/rss"}
+  ],
+  "discovery": [
+    {"id": "gdelt", "name": "GDELT (whole-web scan)", "kind": "gdelt",
+     "url": "https://api.gdeltproject.org/api/v2/doc/doc?query=(war%20OR%20coup%20OR%20earthquake%20OR%20sanctions%20OR%20summit%20OR%20ceasefire)%20sourcelang:english&mode=artlist&maxrecords=100&format=json&timespan=1h"}
+  ]
+}

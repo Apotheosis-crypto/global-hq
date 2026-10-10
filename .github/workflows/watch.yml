@@ -1,0 +1,78 @@
+name: Global HQ watch
+
+# Sweeps every source every 5 minutes, sends FLASH alerts and the morning
+# briefing, and publishes the dashboard to GitHub Pages.
+# Settings -> Secrets and variables -> Actions:
+#   secret   HQ_NTFY_TOPIC     your private ntfy topic (phone push)
+#   secret   HQ_SMTP_PASSWORD  optional, for email delivery
+#   variable HQ_BRIEFING_TIME  e.g. 07:00
+#   variable HQ_BRIEFING_TZ    e.g. Europe/London
+#   variable HQ_CHANNELS       e.g. ntfy  or  ntfy,email
+#   variable HQ_EMAIL_TO / HQ_EMAIL_USER  optional
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: hq-watch
+  cancel-in-progress: false
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    env:
+      HQ_NTFY_TOPIC: ${{ secrets.HQ_NTFY_TOPIC }}
+      HQ_SMTP_PASSWORD: ${{ secrets.HQ_SMTP_PASSWORD }}
+      HQ_BRIEFING_TIME: ${{ vars.HQ_BRIEFING_TIME || '07:00' }}
+      HQ_BRIEFING_TZ: ${{ vars.HQ_BRIEFING_TZ || 'UTC' }}
+      HQ_CHANNELS: ${{ vars.HQ_CHANNELS || 'console,ntfy' }}
+      HQ_EMAIL_TO: ${{ vars.HQ_EMAIL_TO }}
+      HQ_EMAIL_USER: ${{ vars.HQ_EMAIL_USER }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # The SQLite database (what has been seen and alerted) carries over between runs.
+      - name: Restore state
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            hq.db
+            briefings
+          key: hq-state-${{ github.run_id }}
+          restore-keys: hq-state-
+
+      - name: Sweep sources, alert, brief
+        run: python -m hq once
+
+      - name: Save state
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            hq.db
+            briefings
+          key: hq-state-${{ github.run_id }}
+
+      - name: Build dashboard
+        run: python -m hq export --out site
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - id: deploy
+        uses: actions/deploy-pages@v4
