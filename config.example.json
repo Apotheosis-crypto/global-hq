@@ -1,6 +1,6 @@
 {
   "poll_minutes": 5,
-  "briefing": {"time": "07:00", "timezone": "UTC"},
+  "briefing": {"time": "07:00", "timezone": "America/Los_Angeles"},
   "alerts": {
     "threshold": 70,
     "min_independent_sources": 2,

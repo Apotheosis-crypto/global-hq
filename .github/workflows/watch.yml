@@ -6,7 +6,7 @@ name: Global HQ watch
 #   secret   HQ_NTFY_TOPIC     your private ntfy topic (phone push)
 #   secret   HQ_SMTP_PASSWORD  optional, for email delivery
 #   variable HQ_BRIEFING_TIME  e.g. 07:00
-#   variable HQ_BRIEFING_TZ    e.g. Europe/London
+#   variable HQ_BRIEFING_TZ    e.g. America/Los_Angeles (Pacific time)
 #   variable HQ_CHANNELS       e.g. ntfy  or  ntfy,email
 #   variable HQ_EMAIL_TO / HQ_EMAIL_USER  optional
 
@@ -35,7 +35,7 @@ jobs:
       HQ_NTFY_TOPIC: ${{ secrets.HQ_NTFY_TOPIC }}
       HQ_SMTP_PASSWORD: ${{ secrets.HQ_SMTP_PASSWORD }}
       HQ_BRIEFING_TIME: ${{ vars.HQ_BRIEFING_TIME || '07:00' }}
-      HQ_BRIEFING_TZ: ${{ vars.HQ_BRIEFING_TZ || 'UTC' }}
+      HQ_BRIEFING_TZ: ${{ vars.HQ_BRIEFING_TZ || 'America/Los_Angeles' }}
       HQ_CHANNELS: ${{ vars.HQ_CHANNELS || 'console,ntfy' }}
       HQ_EMAIL_TO: ${{ vars.HQ_EMAIL_TO }}
       HQ_EMAIL_USER: ${{ vars.HQ_EMAIL_USER }}
