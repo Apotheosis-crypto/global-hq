@@ -14,6 +14,11 @@ on:
   schedule:
     - cron: "*/5 * * * *"
   workflow_dispatch:
+    inputs:
+      test_alert:
+        description: "Send a test alert to your phone"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -54,6 +59,10 @@ jobs:
             briefings
           key: hq-state-${{ github.run_id }}
           restore-keys: hq-state-
+
+      - name: Send test alert
+        if: ${{ inputs.test_alert }}
+        run: python -m hq test-alert
 
       - name: Sweep sources, alert, brief
         run: python -m hq once
