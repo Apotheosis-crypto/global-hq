@@ -7,5 +7,5 @@ if ! command -v python3 >/dev/null 2>&1; then
   exit 1
 fi
 [ -f config.json ] || cp config.example.json config.json
-python3 -c "import webview" 2>/dev/null || python3 -m pip install --user --quiet pywebview || echo "Couldn't install the app window; opening in your browser instead."
+python3 -c "import webview, certifi" 2>/dev/null || python3 -m pip install --user --quiet pywebview certifi || echo "Couldn't install the app window; opening in your browser instead."
 python3 -m hq app
