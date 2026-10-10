@@ -4,78 +4,398 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Global HQ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0b1220;--panel:#111a2e;--line:#1f2b45;--ink:#e6ecf5;--dim:#8b98b0;--accent:#4c8dff;--hot:#ff5a5f;--warm:#ffb020;--ok:#3ccf91}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
-header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line)}
-h1{font-size:16px;letter-spacing:.14em;text-transform:uppercase;margin:0}h1 span{color:var(--accent)}
-.clock{font:13px ui-monospace,monospace;color:var(--dim)}
-main{display:grid;grid-template-columns:1fr 300px;gap:16px;padding:16px;max-width:1300px;margin:auto}
-@media(max-width:860px){main{grid-template-columns:1fr}}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px}
-.panel h2{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin:0 0 10px}
-.filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
-.filters button{background:transparent;color:var(--dim);border:1px solid var(--line);border-radius:14px;padding:4px 10px;cursor:pointer}
-.filters button.on{color:var(--ink);border-color:var(--accent);background:#16264a}
-.ev{border-top:1px solid var(--line);padding:12px 0;display:grid;grid-template-columns:52px 1fr;gap:12px}
-.score{font:600 18px ui-monospace,monospace;text-align:center;border-radius:6px;padding:6px 0;height:fit-content}
-.s-hot{background:#3a1418;color:var(--hot)}.s-warm{background:#3a2a0e;color:var(--warm)}.s-cool{background:#13233f;color:var(--accent)}
-.ev h3{margin:0 0 4px;font-size:15px}.meta{color:var(--dim);font-size:12px}
-.ev details{margin-top:6px}.ev summary{cursor:pointer;color:var(--dim);font-size:12px}
-.ev ul{margin:6px 0 0;padding-left:18px}.ev a{color:var(--accent)}
-.flash{display:inline-block;background:var(--hot);color:#fff;font-size:10px;font-weight:700;letter-spacing:.08em;padding:1px 6px;border-radius:3px;margin-right:6px}
-.src{display:flex;justify-content:space-between;gap:8px;padding:4px 0;font-size:12px;border-top:1px solid var(--line)}
-.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
-.btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;padding:6px 12px;border-radius:6px;font-size:13px}
-.empty{color:var(--dim);padding:20px 0}
+:root{
+  --bg:#03060c;--panel:rgba(10,18,33,.78);--panel2:#0b1527;--line:#15233c;--line2:#1f3354;
+  --ink:#e8eef8;--dim:#7d8ca8;--faint:#4a5875;
+  --cyan:#3fd3ff;--amber:#ffb547;--orange:#ff7a45;--red:#ff4d5e;--green:#35d39a;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:13px/1.45 var(--sans);-webkit-font-smoothing:antialiased}
+body{background:radial-gradient(1200px 600px at 70% -10%,rgba(63,211,255,.08),transparent 60%),radial-gradient(900px 500px at -10% 110%,rgba(255,77,94,.06),transparent 60%),var(--bg);min-height:100vh}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.012) 0 1px,transparent 1px 3px);z-index:50}
+button{font:inherit;color:inherit}
+.mono{font-family:var(--mono)}
+
+/* header */
+header{display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(10,18,33,.9),rgba(10,18,33,.6));backdrop-filter:blur(8px);position:sticky;top:0;z-index:20}
+.brand{display:flex;align-items:center;gap:12px}
+.radar{width:38px;height:38px;border-radius:50%;border:1px solid var(--line2);position:relative;overflow:hidden;background:radial-gradient(circle,rgba(63,211,255,.15),transparent 70%)}
+.radar::before{content:"";position:absolute;inset:0;background:conic-gradient(from 0deg,rgba(63,211,255,.55),transparent 25%);animation:spin 3s linear infinite}
+.radar::after{content:"";position:absolute;inset:8px;border-radius:50%;border:1px solid rgba(63,211,255,.25)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.brand h1{margin:0;font:700 15px/1 var(--sans);letter-spacing:.28em}
+.brand h1 b{color:var(--cyan);font-weight:700}
+.brand small{display:block;color:var(--dim);font:10px var(--mono);letter-spacing:.2em;margin-top:5px;text-transform:uppercase}
+.stats{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.stat{padding:6px 12px;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.015);min-width:96px}
+.stat label{display:block;font:10px var(--mono);letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+.stat span{font:600 16px var(--mono)}
+.threat{border-color:currentColor;box-shadow:0 0 18px -6px currentColor}
+.threat span{letter-spacing:.12em}
+.actions{display:flex;gap:8px;align-items:center}
+.btn{background:rgba(63,211,255,.08);border:1px solid rgba(63,211,255,.35);color:var(--cyan);padding:8px 14px;border-radius:8px;cursor:pointer;text-decoration:none;font-weight:600;font-size:12px;letter-spacing:.04em;white-space:nowrap}
+.btn:hover{background:rgba(63,211,255,.16)}
+.btn.ghost{background:transparent;border-color:var(--line2);color:var(--ink)}
+.btn[hidden]{display:none}
+
+/* clocks + ticker */
+.strip{display:flex;align-items:stretch;border-bottom:1px solid var(--line);background:rgba(4,8,15,.85);font:12px var(--mono)}
+.clocks{display:flex;gap:16px;padding:8px 20px;border-right:1px solid var(--line);white-space:nowrap;color:var(--dim)}
+.clocks b{color:var(--ink);font-weight:600;margin-left:4px}
+.ticker{flex:1;overflow:hidden;position:relative;mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent)}
+.ticker-track{display:inline-flex;gap:36px;padding:8px 0;white-space:nowrap;animation:tick 90s linear infinite}
+.ticker:hover .ticker-track{animation-play-state:paused}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{cursor:pointer;color:var(--ink)}
+.ticker-item i{font-style:normal;font-weight:600;margin-right:8px}
+
+/* layout */
+main{display:grid;grid-template-columns:minmax(0,1fr) 380px;grid-template-areas:"map queue" "detail queue" "bottom bottom";gap:16px;padding:16px 20px 24px;max-width:1700px;margin:0 auto}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;position:relative;overflow:hidden}
+.panel-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.panel-h h2{margin:0;font:600 11px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.panel-h h2::before{content:"";display:inline-block;width:6px;height:6px;background:var(--cyan);border-radius:1px;margin-right:8px;vertical-align:1px;box-shadow:0 0 8px var(--cyan)}
+
+/* map */
+.map{grid-area:map}
+.map-wrap{position:relative;padding:6px 10px 10px}
+#map{width:100%;height:auto;display:block}
+#map .land{fill:#0d192c;stroke:#1b2b47;stroke-width:.5}
+#map .land.hot1{fill:#14324a}#map .land.hot2{fill:#3a2f1b}#map .land.hot3{fill:#3d1a22}
+#map .grid{stroke:rgba(63,211,255,.06);stroke-width:.5;fill:none}
+#map .pin{cursor:pointer}
+#map .pin circle.core{stroke:#03060c;stroke-width:1}
+#map .pin.sel circle.core{stroke:#fff;stroke-width:1.6}
+#map .pulse{fill:none;stroke-width:1.2;transform-box:fill-box;transform-origin:center;animation:pulse 2.2s ease-out infinite}
+@keyframes pulse{0%{transform:scale(1);opacity:.9}100%{transform:scale(4);opacity:0}}
+.legend{position:absolute;left:22px;bottom:18px;display:flex;gap:12px;font:10px var(--mono);color:var(--dim);background:rgba(3,6,12,.75);padding:6px 10px;border:1px solid var(--line);border-radius:6px}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.tip{position:absolute;pointer-events:none;background:rgba(5,10,20,.95);border:1px solid var(--line2);border-radius:8px;padding:8px 10px;max-width:280px;font-size:12px;opacity:0;transition:opacity .12s;z-index:5}
+.tip b{display:block;margin-bottom:2px}
+.filters{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.chip{background:transparent;border:1px solid var(--line2);color:var(--dim);border-radius:999px;padding:3px 10px;font-size:11px;cursor:pointer}
+.chip.on{color:var(--ink);border-color:var(--cyan);background:rgba(63,211,255,.1)}
+.search{background:rgba(255,255,255,.03);border:1px solid var(--line2);border-radius:8px;color:var(--ink);padding:5px 10px;font:12px var(--sans);width:160px}
+.search::placeholder{color:var(--faint)}
+
+/* queue */
+.queue{grid-area:queue;display:flex;flex-direction:column;max-height:calc(100vh - 140px);position:sticky;top:120px;align-self:start}
+.qlist{overflow:auto;flex:1}
+.q{display:grid;grid-template-columns:46px 1fr;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .12s}
+.q:hover{background:rgba(255,255,255,.025)}
+.q.sel{background:rgba(63,211,255,.07);box-shadow:inset 3px 0 0 var(--cyan)}
+.ring{width:46px;height:46px;position:relative}
+.ring svg{transform:rotate(-90deg)}
+.ring span{position:absolute;inset:0;display:grid;place-items:center;font:600 13px var(--mono)}
+.q h3{margin:0 0 4px;font-size:13px;font-weight:600;line-height:1.35}
+.meta{color:var(--dim);font-size:11px}
+.tag{display:inline-block;font:600 9px var(--mono);letter-spacing:.1em;padding:2px 6px;border-radius:3px;margin-right:6px;vertical-align:1px}
+.tag.flash{background:var(--red);color:#fff;animation:blink 1.6s steps(2) infinite}
+@keyframes blink{50%{opacity:.55}}
+.empty{color:var(--dim);padding:24px 16px}
+
+/* detail */
+.detail{grid-area:detail}
+.detail-body{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:20px;padding:16px}
+.detail h3{margin:0 0 8px;font-size:18px;line-height:1.3}
+.score-big{font:700 40px/1 var(--mono)}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin:6px 0 12px}
+.bar i{display:block;height:100%;border-radius:3px}
+.reasons{list-style:none;padding:0;margin:0;font:12px var(--mono);color:var(--dim)}
+.reasons li{padding:4px 0;border-bottom:1px dashed var(--line)}
+.reasons li b{color:var(--ink);float:right;font-weight:600}
+.evidence{list-style:none;margin:0;padding:0}
+.evidence li{padding:8px 0;border-bottom:1px solid var(--line)}
+.evidence a{color:var(--cyan);text-decoration:none;font-weight:600}
+.evidence a:hover{text-decoration:underline}
+.tier{font:600 9px var(--mono);padding:1px 5px;border-radius:3px;border:1px solid var(--line2);color:var(--dim);margin-left:6px}
+.tier.t1{border-color:rgba(53,211,154,.5);color:var(--green)}
+
+/* bottom */
+.bottom{grid-area:bottom;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.rows{padding:10px 16px 14px}
+.row{display:grid;grid-template-columns:110px 1fr 40px;gap:10px;align-items:center;padding:5px 0;font-size:12px}
+.row .bar{margin:0}
+.row span:last-child{text-align:right;font-family:var(--mono);color:var(--dim)}
+.health{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:4px 12px;padding:10px 16px 14px;font-size:11px}
+.health div{display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--dim)}
+.dot{width:7px;height:7px;border-radius:50%;flex:none}
+
+/* toast */
+.toasts{position:fixed;right:20px;top:90px;display:flex;flex-direction:column;gap:10px;z-index:60}
+.toast{width:340px;background:rgba(30,8,14,.96);border:1px solid var(--red);border-radius:10px;padding:12px 14px;box-shadow:0 0 30px -8px var(--red);animation:slide .3s ease-out;cursor:pointer}
+.toast b{color:var(--red);font:700 11px var(--mono);letter-spacing:.16em}
+.toast p{margin:4px 0 0;font-weight:600}
+@keyframes slide{from{transform:translateX(30px);opacity:0}}
+.notice{display:none;margin:0 20px;padding:8px 12px;border:1px solid var(--line2);border-radius:8px;color:var(--dim);font-size:12px}
+
+@media (max-width:1100px){
+  header{grid-template-columns:1fr;justify-items:start}
+  .stats{justify-content:flex-start}
+  main{grid-template-columns:1fr;grid-template-areas:"map" "queue" "detail" "bottom";padding:12px 16px}
+  .queue{position:static;max-height:520px}
+  .detail-body{grid-template-columns:1fr}
+  .bottom{grid-template-columns:1fr}
+  .clocks{display:none}
+}
 </style>
 </head>
 <body>
 <header>
-  <h1>Global <span>Intelligence</span> HQ</h1>
-  <div class="clock" id="clock"></div>
-  <a class="btn" href="briefing/" target="_blank">Today's briefing</a>
+  <div class="brand">
+    <div class="radar"></div>
+    <div><h1>GLOBAL <b>HQ</b></h1><small>Situation Room · verified sources only</small></div>
+  </div>
+  <div class="stats">
+    <div class="stat threat" id="threat"><label>Threat level</label><span>—</span></div>
+    <div class="stat"><label>Active events</label><span id="s-events">—</span></div>
+    <div class="stat"><label>Flash · 48h</label><span id="s-flash">—</span></div>
+    <div class="stat"><label>Sources up</label><span id="s-sources">—</span></div>
+    <div class="stat"><label>Last sweep</label><span id="s-sweep">—</span></div>
+  </div>
+  <div class="actions">
+    <button class="btn ghost" id="notify-btn" hidden>Enable alerts</button>
+    <button class="btn ghost" id="sweep-btn" hidden>Sweep now</button>
+    <a class="btn" href="briefing/" target="_blank" rel="noopener">Morning briefing</a>
+  </div>
 </header>
+<div class="strip">
+  <div class="clocks" id="clocks"></div>
+  <div class="ticker"><div class="ticker-track" id="ticker"></div></div>
+</div>
+<div class="notice" id="notice"></div>
+
 <main>
-  <section class="panel">
-    <h2>Event watch (last 48h, verified sources)</h2>
-    <div class="filters" id="filters"></div>
-    <div id="events"><div class="empty">Waiting for first sweep...</div></div>
+  <section class="panel map">
+    <div class="panel-h">
+      <h2>World watch</h2>
+      <div class="filters">
+        <div id="regions" class="filters"></div>
+        <button class="chip" id="major">Major only</button>
+        <input class="search" id="search" placeholder="Search events…" aria-label="Search events">
+      </div>
+    </div>
+    <div class="map-wrap">
+      <svg id="map" role="img" aria-label="World map of active events"></svg>
+      <div class="legend"><span><i style="background:var(--red)"></i>Critical</span><span><i style="background:var(--orange)"></i>High</span><span><i style="background:var(--amber)"></i>Elevated</span><span><i style="background:var(--cyan)"></i>Watch</span></div>
+      <div class="tip" id="tip"></div>
+    </div>
   </section>
-  <aside>
-    <div class="panel" style="margin-bottom:16px"><h2>Schedule</h2><div id="sched" class="meta"></div></div>
-    <div class="panel"><h2>Source health</h2><div id="health"></div></div>
+
+  <aside class="panel queue">
+    <div class="panel-h"><h2>Priority queue</h2><span class="meta" id="q-count"></span></div>
+    <div class="qlist" id="queue"><div class="empty">Waiting for the first sweep…</div></div>
   </aside>
+
+  <section class="panel detail">
+    <div class="panel-h"><h2>Event file</h2><span class="meta mono" id="d-id"></span></div>
+    <div id="detail"><div class="empty">Select an event on the map or in the queue.</div></div>
+  </section>
+
+  <section class="bottom">
+    <div class="panel"><div class="panel-h"><h2>Regional activity</h2></div><div class="rows" id="regionbars"></div></div>
+    <div class="panel"><div class="panel-h"><h2>By category</h2></div><div class="rows" id="catbars"></div></div>
+    <div class="panel"><div class="panel-h"><h2>Source network</h2><span class="meta" id="h-count"></span></div><div class="health" id="health"></div></div>
+  </section>
 </main>
+<div class="toasts" id="toasts"></div>
+
+<script src="static/worldmap.js"></script>
 <script>
-let events = [], region = "All", threshold = 70;
-const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const cls = s => s >= 70 ? "s-hot" : s >= 45 ? "s-warm" : "s-cool";
-function tick(){ const d=new Date(); document.getElementById("clock").textContent =
-  ["UTC","America/New_York","Europe/London","Asia/Tokyo"].map(z=>z.split("/").pop().replace("_"," ")+" "+d.toLocaleTimeString("en-GB",{timeZone:z,hour:"2-digit",minute:"2-digit"})).join("  |  "); }
-function render(){
-  const regions = ["All", ...new Set(events.map(e => e.region))];
-  document.getElementById("filters").innerHTML = regions.map(r => `<button class="${r===region?"on":""}" data-r="${esc(r)}">${esc(r)}</button>`).join("");
-  const list = events.filter(e => region === "All" || e.region === region);
-  document.getElementById("events").innerHTML = list.length ? list.map(e => `
-    <div class="ev"><div class="score ${cls(e.score)}">${e.score}</div><div>
-      <h3>${e.alerted ? '<span class="flash">FLASH</span>' : ""}${esc(e.headline)}</h3>
-      <div class="meta">${esc(e.category)} · ${esc(e.region)} · ${e.sources} verified source(s)${e.tier1 ? " · official" : ""} · ${new Date(e.last_seen).toUTCString().slice(5,22)} UTC</div>
-      <details><summary>Why this score / evidence</summary><ul>${e.reasons.map(r=>`<li>${esc(r)}</li>`).join("")}</ul>
-      <ul>${e.evidence.map(i=>`<li><a href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.source_name)}</a>: ${esc(i.title)}</li>`).join("")}</ul></details>
-    </div></div>`).join("") : '<div class="empty">No events yet.</div>';
+"use strict";
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const store = {get(k, d){try{return JSON.parse(localStorage.getItem(k)) ?? d}catch{return d}}, set(k, v){try{localStorage.setItem(k, JSON.stringify(v))}catch{}}};
+const sev = s => s >= 85 ? {c:"#ff4d5e", n:"Critical", k:3} : s >= 70 ? {c:"#ff7a45", n:"High", k:3} : s >= 45 ? {c:"#ffb547", n:"Elevated", k:2} : {c:"#3fd3ff", n:"Watch", k:1};
+const ago = t => { if (!t) return "—"; const m = Math.round((Date.now() - new Date(t)) / 60000); return m < 1 ? "just now" : m < 60 ? m + "m ago" : m < 1440 ? Math.round(m / 60) + "h ago" : Math.round(m / 1440) + "d ago"; };
+
+let DATA = {events: []}, HEALTH = [], selected = null, region = store.get("hq-region", "All"), major = store.get("hq-major", false), query = "";
+
+/* ---------- map ---------- */
+const W = window.WORLD, svgNS = "http://www.w3.org/2000/svg";
+function project(lat, lon){
+  const l = lon * Math.PI / 180, p = lat * Math.PI / 180, p2 = p * p, p4 = p2 * p2;
+  const x = l * (0.8707 - 0.131979 * p2 + p4 * (-0.013791 + p4 * (0.003971 * p2 - 0.001529 * p4)));
+  const y = p * (1.007226 + p2 * (0.015085 + p4 * (-0.044475 + 0.028874 * p2 - 0.005916 * p4)));
+  return [W.w / 2 + x * W.scale, W.h / 2 - y * W.scale];
 }
-document.getElementById("filters").addEventListener("click", e => { if (e.target.dataset.r) { region = e.target.dataset.r; render(); } });
+function el(tag, attrs, parent){ const e = document.createElementNS(svgNS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+const map = $("map"), mapTop = project(84, 0)[1], mapBottom = project(-58, 0)[1];  // crop the empty polar rows
+map.setAttribute("viewBox", `0 ${mapTop.toFixed(0)} ${W.w} ${(mapBottom - mapTop).toFixed(0)}`);
+const gGrid = el("g", {}, map), gLand = el("g", {}, map), gPins = el("g", {}, map);
+for (let lon = -180; lon <= 180; lon += 30) { let d = ""; for (let lat = -85; lat <= 85; lat += 5) { const [x, y] = project(lat, lon); d += (d ? "L" : "M") + x.toFixed(1) + "," + y.toFixed(1); } el("path", {d, class: "grid"}, gGrid); }
+for (let lat = -60; lat <= 60; lat += 30) { let d = ""; for (let lon = -180; lon <= 180; lon += 5) { const [x, y] = project(lat, lon); d += (d ? "L" : "M") + x.toFixed(1) + "," + y.toFixed(1); } el("path", {d, class: "grid"}, gGrid); }
+const landByName = {};
+W.countries.forEach(c => { if (c.n === "Antarctica") return; const p = el("path", {d: c.d, class: "land"}, gLand); el("title", {}, p).textContent = c.n; landByName[c.n] = p; });
+
+const tip = $("tip");
+function showTip(ev, e){
+  const s = sev(e.score);
+  tip.innerHTML = `<b>${esc(e.headline)}</b><span class="meta"><span style="color:${s.c}">${s.n} · ${e.score}</span> · ${esc(e.geo?.place || e.region)} · ${e.sources} source${e.sources > 1 ? "s" : ""}</span>`;
+  const r = map.parentElement.getBoundingClientRect();
+  tip.style.left = Math.min(ev.clientX - r.left + 14, r.width - 290) + "px";
+  tip.style.top = (ev.clientY - r.top + 14) + "px";
+  tip.style.opacity = 1;
+}
+
+function drawMap(list){
+  gPins.innerHTML = "";
+  Object.values(landByName).forEach(p => { p.setAttribute("class", "land"); delete p.dataset.k; });
+  const placed = {};
+  [...list].sort((a, b) => a.score - b.score).forEach(e => {
+    if (!e.geo) return;
+    const country = !e.geo.exact && Object.keys(landByName).find(n => n === e.geo.place || (n === "United States of America" && e.geo.place === "United States"));
+    if (country) { const p = landByName[country], k = Math.max(sev(e.score).k, +(p.dataset.k || 0)); p.dataset.k = k; p.setAttribute("class", "land hot" + k); }
+    let [x, y] = project(e.geo.lat, e.geo.lon);
+    const key = Math.round(x / 6) + ":" + Math.round(y / 6), n = placed[key] = (placed[key] || 0) + 1;  // fan out pins on the same spot
+    if (n > 1) { const a = n * 2.4; x += Math.cos(a) * 5 * Math.sqrt(n); y += Math.sin(a) * 5 * Math.sqrt(n); }
+    const s = sev(e.score), r = 3 + e.score / 16;
+    const g = el("g", {class: "pin" + (selected === e.id ? " sel" : ""), transform: `translate(${x.toFixed(1)},${y.toFixed(1)})`}, gPins);
+    if (e.score >= DATA.config.threshold) el("circle", {r, class: "pulse", stroke: s.c}, g);
+    el("circle", {r: r * 2.2, fill: s.c, opacity: .12}, g);
+    el("circle", {r, fill: s.c, class: "core"}, g);
+    g.addEventListener("mousemove", ev => showTip(ev, e));
+    g.addEventListener("mouseleave", () => tip.style.opacity = 0);
+    g.addEventListener("click", () => select(e.id));
+  });
+}
+
+/* ---------- panels ---------- */
+function ring(score){
+  const s = sev(score), C = 2 * Math.PI * 19;
+  return `<div class="ring"><svg width="46" height="46"><circle cx="23" cy="23" r="19" fill="none" stroke="#15233c" stroke-width="3"/><circle cx="23" cy="23" r="19" fill="none" stroke="${s.c}" stroke-width="3" stroke-linecap="round" stroke-dasharray="${C * score / 100} ${C}"/></svg><span style="color:${s.c}">${score}</span></div>`;
+}
+function filtered(){
+  const q = query.toLowerCase();
+  return DATA.events.filter(e => (region === "All" || e.region === region) && (!major || e.score >= 45) &&
+    (!q || (e.headline + " " + e.category + " " + e.region + " " + (e.geo?.place || "")).toLowerCase().includes(q)));
+}
+function renderQueue(list){
+  $("q-count").textContent = list.length + " shown";
+  $("queue").innerHTML = list.length ? list.map(e => `
+    <div class="q${selected === e.id ? " sel" : ""}" data-id="${e.id}">${ring(e.score)}<div>
+      <h3>${e.alerted ? '<span class="tag flash">FLASH</span>' : ""}${esc(e.headline)}</h3>
+      <div class="meta">${esc(e.category)} · ${esc(e.geo?.place || e.region)} · ${e.sources} src${e.tier1 ? " · official" : ""} · ${ago(e.last_seen)}</div>
+    </div></div>`).join("") : '<div class="empty">No events match these filters.</div>';
+}
+function renderDetail(){
+  const e = DATA.events.find(x => x.id === selected);
+  if (!e) { $("d-id").textContent = ""; $("detail").innerHTML = '<div class="empty">Select an event on the map or in the queue.</div>'; return; }
+  const s = sev(e.score);
+  $("d-id").textContent = "EVT-" + e.id.toUpperCase();
+  $("detail").innerHTML = `<div class="detail-body"><div>
+      <div class="meta" style="margin-bottom:6px">${e.alerted ? '<span class="tag flash">FLASH SENT</span>' : ""}<span class="tag" style="background:${s.c};color:#03060c">${s.n.toUpperCase()}</span>${esc(e.category)} · ${esc(e.region)}${e.geo?.place ? " · " + esc(e.geo.place) : ""}</div>
+      <h3>${esc(e.headline)}</h3>
+      <div class="meta">First reported ${ago(e.first_seen)} · updated ${ago(e.last_seen)} · ${e.sources} independent verified source${e.sources > 1 ? "s" : ""}</div>
+      <div style="display:flex;align-items:end;gap:14px;margin-top:16px"><div class="score-big" style="color:${s.c}">${e.score}</div><div style="flex:1"><div class="meta">Significance score</div><div class="bar"><i style="width:${e.score}%;background:${s.c}"></i></div></div></div>
+      <ul class="reasons">${e.reasons.map(r => { const m = r.match(/^(.*)\((\+\d+)\)$/); return m ? `<li>${esc(m[1])}<b>${m[2]}</b></li>` : `<li>${esc(r)}</li>`; }).join("")}</ul>
+    </div><div>
+      <div class="meta" style="margin-bottom:6px;letter-spacing:.14em;font-family:var(--mono)">EVIDENCE</div>
+      <ul class="evidence">${e.evidence.map(i => { const t = (HEALTH.find(h => h.source_id === i.source_id) || {}).tier; return `<li><a href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.source_name)}</a><span class="tier${t === 1 ? " t1" : ""}">${t === 1 ? "OFFICIAL" : "NEWSROOM"}</span><div class="meta">${esc(i.title)}</div></li>`; }).join("")}</ul>
+    </div></div>`;
+}
+function bars(id, groups){
+  const max = Math.max(1, ...groups.map(g => g.n));
+  $(id).innerHTML = groups.map(g => `<div class="row"><span>${esc(g.k)}</span><div class="bar"><i style="width:${100 * g.n / max}%;background:${sev(g.top).c}"></i></div><span>${g.n}</span></div>`).join("") || '<div class="empty">No data yet.</div>';
+}
+function group(list, key){
+  const m = {}; list.forEach(e => { const k = e[key]; m[k] = m[k] || {k, n: 0, top: 0}; m[k].n++; m[k].top = Math.max(m[k].top, e.score); });
+  return Object.values(m).sort((a, b) => b.n - a.n || b.top - a.top);
+}
+function renderStats(){
+  const ev = DATA.events, top = Math.max(0, ...ev.map(e => e.score)), high = ev.filter(e => e.score >= 70).length;
+  const lvl = top >= 90 || high >= 3 ? ["SEVERE", "var(--red)"] : top >= 70 ? ["HIGH", "var(--orange)"] : top >= 45 ? ["ELEVATED", "var(--amber)"] : ["GUARDED", "var(--green)"];
+  $("threat").style.color = lvl[1]; $("threat").querySelector("span").textContent = lvl[0];
+  $("s-events").textContent = ev.length;
+  $("s-flash").textContent = ev.filter(e => e.alerted).length;
+  const verified = HEALTH.filter(h => h.tier); $("s-sources").textContent = `${verified.filter(h => h.ok).length}/${verified.length}`;
+  $("s-sweep").textContent = ago(DATA.generated_at);
+}
+function renderTicker(){
+  const items = DATA.events.slice(0, 14).map(e => `<span class="ticker-item" data-id="${e.id}"><i style="color:${sev(e.score).c}">▲ ${e.score}</i>${esc(e.headline)}</span>`).join("");
+  $("ticker").innerHTML = items + items;  // doubled for a seamless loop
+}
+function renderHealth(){
+  const v = HEALTH.filter(h => h.tier);
+  $("h-count").textContent = v.length ? `${v.filter(h => h.ok).length} of ${v.length} reporting` : "";
+  $("health").innerHTML = HEALTH.map(h => `<div title="${esc(h.error || (h.count + " items"))}"><span class="dot" style="background:${h.ok ? "var(--green)" : "var(--red)"};box-shadow:0 0 6px ${h.ok ? "var(--green)" : "var(--red)"}"></span>${esc(h.name)}</div>`).join("");
+}
+function renderFilters(){
+  const regions = ["All", ...new Set(DATA.events.map(e => e.region))];
+  if (!regions.includes(region)) region = "All";
+  $("regions").innerHTML = regions.map(r => `<button class="chip${r === region ? " on" : ""}" data-r="${esc(r)}">${esc(r)}</button>`).join("");
+  $("major").classList.toggle("on", major);
+}
+function render(){
+  const list = filtered();
+  if (selected && !DATA.events.some(e => e.id === selected)) selected = null;
+  if (!selected && list.length) selected = list[0].id;
+  renderStats(); renderFilters(); drawMap(list); renderQueue(list); renderDetail();
+  bars("regionbars", group(list, "region")); bars("catbars", group(list, "category")); renderHealth();
+}
+function select(id){ selected = id; render(); }
+
+/* ---------- alerts in the app ---------- */
+let audio;
+function beep(){
+  try {
+    audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+    [880, 660, 880].forEach((f, i) => { const o = audio.createOscillator(), g = audio.createGain(); o.frequency.value = f; o.connect(g); g.connect(audio.destination); g.gain.setValueAtTime(.08, audio.currentTime + i * .18); g.gain.exponentialRampToValueAtTime(.0001, audio.currentTime + i * .18 + .16); o.start(audio.currentTime + i * .18); o.stop(audio.currentTime + i * .18 + .17); });
+  } catch {}
+}
+function flashAlert(e){
+  const t = document.createElement("div"); t.className = "toast";
+  t.innerHTML = `<b>FLASH · SCORE ${e.score}</b><p>${esc(e.headline)}</p><div class="meta">${esc(e.category)} · ${esc(e.geo?.place || e.region)}</div>`;
+  t.onclick = () => { select(e.id); t.remove(); };
+  $("toasts").prepend(t); setTimeout(() => t.remove(), 20000);
+  beep();
+  if ("Notification" in window && Notification.permission === "granted") { try { new Notification("FLASH: " + e.headline, {body: `${e.category} · ${e.geo?.place || e.region} · score ${e.score}`}); } catch {} }
+}
+function checkNew(){
+  const seen = new Set(store.get("hq-seen-flash", null) || []), first = store.get("hq-seen-flash", null) === null;
+  DATA.events.filter(e => e.alerted && !seen.has(e.id)).forEach(e => { seen.add(e.id); if (!first) flashAlert(e); });
+  store.set("hq-seen-flash", [...seen].slice(-500));
+}
+
+/* ---------- wiring ---------- */
+function clocks(){
+  const d = new Date(), zones = [["Los Angeles", "America/Los_Angeles"], ["New York", "America/New_York"], ["London", "Europe/London"], ["Geneva", "Europe/Zurich"], ["Tokyo", "Asia/Tokyo"], ["UTC", "UTC"]];
+  $("clocks").innerHTML = zones.map(([n, z]) => `<span>${n}<b>${d.toLocaleTimeString("en-GB", {timeZone: z, hour: "2-digit", minute: "2-digit"})}</b></span>`).join("");
+  $("s-sweep").textContent = ago(DATA.generated_at);
+}
 async function load(){
   try {
-    const d = await (await fetch("api/events.json")).json(); events = d.events; threshold = d.config.threshold;
-    document.getElementById("sched").innerHTML = `Morning briefing: <b>${esc(d.config.briefing.time)}</b> ${esc(d.config.briefing.timezone)}<br>Flash alert threshold: score ≥ <b>${threshold}</b>`;
-    render();
-    const h = await (await fetch("api/health.json")).json();
-    document.getElementById("health").innerHTML = h.map(s => `<div class="src"><span><span class="dot" style="background:${s.ok?"var(--ok)":"var(--hot)"}"></span>${esc(s.name)}</span><span class="meta">${s.tier ? "T"+s.tier : "scan"} · ${s.count}</span></div>`).join("");
-  } catch (e) { console.error(e); }
+    const [d, h] = await Promise.all([fetch("api/events.json", {cache: "no-store"}).then(r => r.json()), fetch("api/health.json", {cache: "no-store"}).then(r => r.json())]);
+    DATA = d; HEALTH = h;
+    $("sweep-btn").hidden = !d.live;
+    render(); renderTicker(); checkNew();
+    $("notice").style.display = "none";
+  } catch (err) {
+    $("notice").style.display = "block"; $("notice").textContent = "Can't reach the data feed right now. Retrying…";
+  }
 }
-tick(); setInterval(tick, 30000); load(); setInterval(load, 60000);
+document.addEventListener("click", ev => {
+  const q = ev.target.closest("[data-id]"); if (q) return select(q.dataset.id);
+  const r = ev.target.closest("[data-r]"); if (r) { region = r.dataset.r; store.set("hq-region", region); selected = null; render(); }
+});
+$("major").onclick = () => { major = !major; store.set("hq-major", major); selected = null; render(); };
+$("search").oninput = e => { query = e.target.value; selected = null; render(); };
+$("sweep-btn").onclick = async () => { const b = $("sweep-btn"); b.textContent = "Sweeping…"; b.disabled = true; try { await fetch("api/sweep", {method: "POST"}); } catch {} setTimeout(() => { load(); b.textContent = "Sweep now"; b.disabled = false; }, 25000); };
+if ("Notification" in window && Notification.permission === "default") { $("notify-btn").hidden = false; $("notify-btn").onclick = () => Notification.requestPermission().then(() => $("notify-btn").hidden = true); }
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT") return;
+  const list = filtered(), i = list.findIndex(x => x.id === selected);
+  if (e.key === "j" || e.key === "ArrowDown") { e.preventDefault(); if (list[i + 1]) select(list[i + 1].id); }
+  if (e.key === "k" || e.key === "ArrowUp") { e.preventDefault(); if (list[i - 1]) select(list[i - 1].id); }
+  if (e.key === "/") { e.preventDefault(); $("search").focus(); }
+});
+clocks(); setInterval(clocks, 15000);
+load(); setInterval(load, 60000);
 </script>
 </body>
 </html>

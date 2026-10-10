@@ -1,15 +1,18 @@
-"""python -m hq [run|once|briefing|export|test-alert] [--config config.json] [--out site]"""
+"""python -m hq [app|demo|run|once|briefing|export|test-alert] [--config config.json] [--out site]"""
 import argparse
 
 from . import app, briefing, store
 
 p = argparse.ArgumentParser(prog="hq")
-p.add_argument("command", choices=["run", "once", "briefing", "export", "test-alert"], nargs="?", default="run")
+p.add_argument("command", choices=["app", "demo", "run", "once", "briefing", "export", "test-alert"], nargs="?", default="run")
 p.add_argument("--config", default=str(app.ROOT / "config.json"))
 p.add_argument("--out", default=str(app.ROOT / "site"))
 a = p.parse_args()
 cfg, src = app.load(a.config)
-if a.command == "briefing":
+if a.command in ("app", "demo"):
+    from . import desktop
+    desktop.main(cfg, src, demo=a.command == "demo")
+elif a.command == "briefing":
     db = store.connect(str(app.ROOT / cfg["db_path"]))
     print(briefing.build(db, app.source_index(src), tz=cfg["briefing"]["timezone"])[1])
 elif a.command == "test-alert":

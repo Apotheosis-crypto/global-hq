@@ -2,7 +2,20 @@
 
 A self-hosted watch floor for world events. It sweeps verified news and official feeds every few minutes, scans the open web for early signals, groups reports into events, scores how globally significant each one is, sends a **FLASH alert** the moment something crosses the threshold, and delivers a **morning intelligence briefing** at a set time.
 
-![Dashboard](docs/dashboard.png)
+![Global HQ desktop app](docs/app.png)
+
+## Desktop app
+1. Install Python 3 from [python.org](https://www.python.org/downloads/) if you don't have it (on Windows, tick "Add Python to PATH").
+2. Download this repository (green **Code** button > **Download ZIP**) and unzip it.
+3. Double-click **Global HQ.command** (Mac) or **Global HQ.bat** (Windows).
+
+The first launch installs the app window (pywebview) and opens Global HQ in its own window. While it's open it sweeps every source every 5 minutes, pops a notification on your computer for each FLASH alert, and sends the morning briefing. Without pywebview it opens in Chrome or Edge app mode, or your browser.
+
+On a Mac the first time, macOS may say the file is from an unidentified developer: right-click it, choose **Open**, then **Open** again.
+
+* `python3 -m hq demo` opens the app with real headlines from 9 October 2026, no internet needed.
+* Keyboard: `j`/`k` or arrow keys move through events, `/` searches.
+* Phone alerts from the GitHub watch keep working alongside the app. The app itself only notifies this computer, so you don't get every alert twice; add `"ntfy"` to `alerts.channels` in `config.json` if you want the app to push to your phone too.
 
 ## Architecture plan
 
@@ -43,14 +56,16 @@ Every event shows its score breakdown ("why this score") and links to each piece
 ### 6. Roadmap
 1. Add an AI analyst pass that writes the briefing's key judgements as prose and catches events the keyword scorer misses.
 2. Expand sources: more regional official feeds, ministries of foreign affairs, licensed wire services.
-3. Map view, topic watchlists (for example "only alert me on Taiwan Strait and Sahel"), and a searchable archive.
+3. Topic watchlists (for example "only alert me on Taiwan Strait and Sahel"), and a searchable archive.
 
 ## Running it
 Needs only Python 3.9+; no packages to install.
 
 ```bash
 cp config.example.json config.json   # set briefing time/timezone, ntfy topic or email
-python3 -m hq            # run the watch: sweeps, alerts, briefing, dashboard on http://localhost:8080
+python3 -m hq app        # desktop app (same as double-clicking the launcher)
+python3 -m hq demo       # desktop app with sample data, offline
+python3 -m hq            # headless watch: sweeps, alerts, briefing, dashboard on http://localhost:8080
 python3 -m hq once       # one sweep, then exit
 python3 -m hq briefing   # print today's briefing
 python3 -m unittest      # offline end-to-end test

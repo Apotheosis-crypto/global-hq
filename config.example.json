@@ -4,7 +4,7 @@
   "alerts": {
     "threshold": 70,
     "min_independent_sources": 2,
-    "channels": ["console", "ntfy"]
+    "channels": ["console", "desktop"]
   },
   "ntfy": {"server": "https://ntfy.sh", "topic": "CHANGE-ME-to-a-long-random-topic"},
   "email": {"smtp_host": "smtp.gmail.com", "smtp_port": 587, "username": "", "password_env": "HQ_SMTP_PASSWORD", "to": ""},

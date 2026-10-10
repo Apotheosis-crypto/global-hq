@@ -1,7 +1,10 @@
 """Delivery channels: console, ntfy push (phone app), email (SMTP), generic webhook."""
 import json
 import os
+import platform
+import shutil
 import smtplib
+import subprocess
 import urllib.request
 from email.message import EmailMessage
 
@@ -35,6 +38,8 @@ def send(cfg, subject, body, html_body=None, urgent=False):
                     s.starttls()
                     s.login(e["username"], os.environ.get(e["password_env"], ""))
                     s.send_message(msg)
+            elif ch == "desktop":
+                desktop(subject, body.splitlines()[0] if body else "")
             elif ch == "webhook":
                 _post(cfg["webhook"]["url"], json.dumps({"subject": subject, "body": body}).encode(), {"Content-Type": "application/json"})
             results.append((ch, None))
@@ -48,3 +53,24 @@ def alert_text(ev, items):
     lines += [f"- {r}" for r in json.loads(ev["reasons"]) if r]
     lines += ["", "Evidence:"] + [f"- {i['source_name']}: {i['url']}" for i in items if i["verified"]][:6]
     return "\n".join(lines)
+
+
+def desktop(title, message):
+    """Native notification on this computer (macOS, Windows 10+, Linux with notify-send)."""
+    system = platform.system()
+    if system == "Darwin":
+        q = lambda t: '"' + t.replace("\\", "\\\\").replace('"', '\\"') + '"'
+        subprocess.run(["osascript", "-e", f"display notification {q(message)} with title {q(title)} sound name \"Glass\""], check=True, timeout=10)
+    elif system == "Windows":
+        ps = (
+            "[Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime] > $null;"
+            "$x = [Windows.UI.Notifications.ToastNotificationManager]::GetTemplateContent([Windows.UI.Notifications.ToastTemplateType]::ToastText02);"
+            "$t = $x.GetElementsByTagName('text'); $t.Item(0).AppendChild($x.CreateTextNode($env:HQ_T)) > $null; $t.Item(1).AppendChild($x.CreateTextNode($env:HQ_M)) > $null;"
+            "[Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier('Global HQ').Show([Windows.UI.Notifications.ToastNotification]::new($x))"
+        )
+        subprocess.run(["powershell", "-NoProfile", "-Command", ps], check=True, timeout=15,
+                       env={**os.environ, "HQ_T": title, "HQ_M": message}, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+    elif shutil.which("notify-send"):
+        subprocess.run(["notify-send", "-u", "critical", title, message], check=True, timeout=10)
+    else:
+        raise RuntimeError("no desktop notification method on this system")

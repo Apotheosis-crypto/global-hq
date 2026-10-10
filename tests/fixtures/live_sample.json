@@ -1,0 +1,251 @@
+[
+ {
+  "source_id": "usgs",
+  "title": "M7.7 earthquake - 12 km WSW of Pitaloza Arriba, Panama",
+  "summary": "Tsunami flag: 1. PAGER alert: red.",
+  "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000u18k",
+  "published": "2026-10-09T22:10:00+00:00",
+  "extra": {
+   "magnitude": 7.7,
+   "pager": "red",
+   "lat": 7.33,
+   "lon": -80.52,
+   "place": "12 km WSW of Pitaloza Arriba, Panama"
+  }
+ },
+ {
+  "source_id": "gdacs",
+  "title": "Red earthquake (Magnitude 7.7M, Depth:20km) in Panama 09/10/2026 22:10 UTC",
+  "summary": "",
+  "url": "https://www.gdacs.org/report.aspx?eventtype=EQ&eventid=1570401",
+  "published": "2026-10-09T22:30:00+00:00",
+  "extra": {
+   "lat": 7.33,
+   "lon": -80.52
+  }
+ },
+ {
+  "source_id": "bbc-world",
+  "title": "Panama earthquake: powerful 7.7 quake shakes Central America",
+  "summary": "At least 14 people killed as buildings collapse.",
+  "url": "https://www.bbc.co.uk/news/panama-quake",
+  "published": "2026-10-09T23:05:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "un-news",
+  "title": "Security Council LIVE: Yemen has fallen back into full-scale war, warns UN envoy",
+  "summary": "Envoy warns of renewed offensive and missile strikes.",
+  "url": "https://news.un.org/feed/view/en/story/2026/10/1168559",
+  "published": "2026-10-09T15:00:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "aljazeera",
+  "title": "Yemen war: UN envoy says country has fallen back into full-scale war",
+  "summary": "",
+  "url": "https://www.aljazeera.com/yemen-envoy",
+  "published": "2026-10-09T15:40:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "guardian",
+  "title": "Three Saudis killed in Riyadh airport attack claimed by Houthis",
+  "summary": "Flights suspended after drone strike.",
+  "url": "https://www.theguardian.com/world/2026/oct/09/riyadh-airport",
+  "published": "2026-10-09T18:20:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "scmp",
+  "title": "Saudi Arabia says 3 killed at Riyadh airport as Yemen war expands",
+  "summary": "",
+  "url": "https://www.scmp.com/riyadh",
+  "published": "2026-10-09T18:50:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "un-news",
+  "title": "Security Council LIVE: Cycle of escalating attacks on civilians in Ukraine 'must end now'",
+  "summary": "",
+  "url": "https://news.un.org/feed/view/en/story/2026/10/1168564",
+  "published": "2026-10-09T12:00:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "africanews",
+  "title": "At least 33 people killed in strikes on Ukrainian public buses",
+  "summary": "Missile strikes hit buses in Kharkiv.",
+  "url": "http://www.africanews.com/ukraine-buses",
+  "published": "2026-10-09T09:00:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "bbc-world",
+  "title": "Ukraine: 33 killed as Russian missile strikes hit public buses",
+  "summary": "",
+  "url": "https://www.bbc.co.uk/news/ukraine-buses",
+  "published": "2026-10-09T09:30:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "france24",
+  "title": "Trump strikes diesel deal with Putin, reversing years of pressure on Russia over Ukraine war",
+  "summary": "",
+  "url": "https://www.france24.com/diesel",
+  "published": "2026-10-09T11:00:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "scmp",
+  "title": "Trump announces major diesel deal with Russia ahead of US midterm elections",
+  "summary": "",
+  "url": "https://www.scmp.com/diesel",
+  "published": "2026-10-09T11:30:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "un-news",
+  "title": "'Serious blow': Guterres condemns new US sanctions on International Criminal Court",
+  "summary": "",
+  "url": "https://news.un.org/feed/view/en/story/2026/10/1168562",
+  "published": "2026-10-09T14:00:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "guardian",
+  "title": "ICC judges hit by new US sanctions as Guterres warns of serious blow",
+  "summary": "",
+  "url": "https://www.theguardian.com/icc",
+  "published": "2026-10-09T14:30:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "bbc-world",
+  "title": "Ethiopia warns Eritrea it will defend itself after troops cross border",
+  "summary": "",
+  "url": "https://www.bbc.co.uk/news/ethiopia",
+  "published": "2026-10-09T10:00:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "africanews",
+  "title": "Ethiopia and Eritrea trade war accusations as troops cross border",
+  "summary": "",
+  "url": "http://www.africanews.com/ethiopia-eritrea",
+  "published": "2026-10-09T10:30:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "africanews",
+  "title": "Kenya boosts Ebola preparedness after registering first case",
+  "summary": "Health ministry confirms outbreak response.",
+  "url": "http://www.africanews.com/kenya-ebola",
+  "published": "2026-10-09T08:00:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "who",
+  "title": "Ebola disease - Kenya: first confirmed case",
+  "summary": "WHO Disease Outbreak News.",
+  "url": "https://www.who.int/emergencies/disease-outbreak-news/kenya",
+  "published": "2026-10-09T13:00:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "un-news",
+  "title": "Darfur: Healthcare needs outstrip resources as Security Council extends Sudan sanctions",
+  "summary": "",
+  "url": "https://news.un.org/feed/view/en/story/2026/10/1168556",
+  "published": "2026-10-09T16:00:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "bbc-world",
+  "title": "Cars torched and shops looted as anti-migrant violence erupts in South Africa",
+  "summary": "",
+  "url": "https://www.bbc.co.uk/news/south-africa",
+  "published": "2026-10-09T17:00:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "guardian",
+  "title": "Hurricane Isaias makes landfall in Florida with severe effects expected",
+  "summary": "",
+  "url": "https://www.theguardian.com/world/2026/oct/09/hurricane-isaias",
+  "published": "2026-10-09T20:00:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "npr-world",
+  "title": "Hurricane Isaias slams into Florida as millions lose power",
+  "summary": "",
+  "url": "https://www.npr.org/isaias",
+  "published": "2026-10-09T20:40:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "scmp",
+  "title": "Omani Flydubai co-pilot planned to crash plane into Israeli airport, UAE says",
+  "summary": "",
+  "url": "https://www.scmp.com/flydubai",
+  "published": "2026-10-09T07:00:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "guardian",
+  "title": "Indonesia accused of 'gross negligence' in wildfires lawsuit as haze tests region",
+  "summary": "",
+  "url": "https://www.theguardian.com/indonesia",
+  "published": "2026-10-09T06:00:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "un-news",
+  "title": "Amid heartache of Nepal flooding disaster, fear remains",
+  "summary": "",
+  "url": "https://news.un.org/feed/view/en/story/2026/10/1168561",
+  "published": "2026-10-09T05:00:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "npr-world",
+  "title": "New U.S. indictment charges former Venezuelan President Nicolas Maduro with torture",
+  "summary": "",
+  "url": "https://www.npr.org/maduro",
+  "published": "2026-10-09T04:00:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "un-news",
+  "title": "Secretary-General congratulates Navi Pillay on receiving 2026 Nobel Peace Prize",
+  "summary": "",
+  "url": "https://news.un.org/nobel",
+  "published": "2026-10-09T03:00:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "npr-world",
+  "title": "Navi Pillay, South African human rights champion, wins Nobel Peace Prize",
+  "summary": "",
+  "url": "https://www.npr.org/nobel",
+  "published": "2026-10-09T03:30:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "gdelt",
+  "title": "Panama quake: rescuers search collapsed buildings",
+  "summary": "",
+  "url": "https://example-blog.com/panama",
+  "published": "2026-10-09T23:10:00+00:00",
+  "extra": {}
+ },
+ {
+  "source_id": "gdelt",
+  "title": "Yemen full-scale war returns says UN envoy",
+  "summary": "",
+  "url": "https://example-site.com/yemen",
+  "published": "2026-10-09T15:50:00+00:00",
+  "extra": {}
+ }
+]
