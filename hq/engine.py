@@ -14,7 +14,8 @@ from datetime import datetime, timedelta, timezone
 STOP = set("""a an the of to in on for and or but with by at from as is are was were be been has have had
 it its this that these those after over into amid says said say new news live latest update updates
 more than up out about how why what who will would could may can not no he she they we you his her their
-our us un uk eu""".split())
+our us un uk eu
+green orange red magnitude depth utc notification alert unknown report reports""".split())  # incl. GDACS boilerplate
 
 # (category, weight, patterns). The highest-weighted match decides the category.
 SIGNALS = [
@@ -32,12 +33,12 @@ SIGNALS = [
 CASUALTY = re.compile(r"(\d[\d,]*)\s+(?:people\s+)?(?:killed|dead|deaths|died|casualties)|(?:killed|kills|killing)\s+(?:at least\s+)?(\d[\d,]*)", re.I)
 
 REGIONS = {
-    "Europe": "ukraine russia france germany poland britain uk italy spain nato kyiv moscow serbia kosovo moldova belarus georgia",
-    "Middle East": "israel gaza iran iraq syria lebanon yemen saudi qatar turkey jordan houthi hezbollah hamas tehran",
-    "Asia": "china taiwan japan korea india pakistan afghanistan myanmar philippines indonesia vietnam bangladesh beijing",
-    "Africa": "sudan ethiopia somalia nigeria congo drc kenya sahel mali niger libya egypt south africa",
-    "Americas": "united states us washington canada mexico brazil venezuela colombia argentina haiti cuba peru chile",
-    "Oceania": "australia new zealand papua fiji",
+    "Europe": "ukraine ukrainian russia russian france french germany german poland polish britain british italy spain nato kyiv moscow serbia kosovo moldova belarus georgia",
+    "Middle East": "israel israeli gaza palestinian iran iranian iraq syria syrian lebanon yemen saudi riyadh qatar turkey jordan houthi houthis hezbollah hamas tehran oman uae emirates kuwait bahrain",
+    "Asia": "china chinese taiwan japan japanese korea korean india indian pakistan afghanistan myanmar philippines indonesia vietnam bangladesh beijing nepal thailand malaysia cambodia mongolia kazakhstan",
+    "Africa": "africa african sudan sudanese darfur ethiopia ethiopian eritrea somalia nigeria congo drc kenya sahel mali niger libya egypt uganda tanzania rwanda chad cameroon ghana senegal mozambique zimbabwe angola algeria morocco tunisia",
+    "Americas": "washington canada mexico brazil venezuela venezuelan colombia argentina haiti cuba peru chile panama guatemala honduras nicaragua ecuador bolivia jamaica florida texas california",
+    "Oceania": "australia zealand papua fiji macquarie tonga samoa vanuatu solomon",
 }
 REGION_WORDS = {w: r for r, ws in REGIONS.items() for w in ws.split()}
 
@@ -53,18 +54,25 @@ def similar(a, b):
     return len(shared) / min(len(a), len(b)) >= 0.4
 
 
-def cluster(items):
-    """Greedy single-pass clustering over items sorted oldest first."""
+def cluster(items, distinct_sources=()):
+    """Greedy single-pass clustering over items sorted oldest first.
+
+    Items are compared with each cluster's first report only, so a cluster
+    cannot snowball into unrelated stories through a chain of loose matches.
+    Items from `distinct_sources` (structured hazard feeds such as USGS or
+    GDACS, where every entry is a separate event) never share a cluster.
+    """
     clusters = []
     for it in sorted(items, key=lambda i: i["published"]):
         tok = tokens(it["title"])
         for c in clusters:
+            if it["source_id"] in distinct_sources and any(i["source_id"] == it["source_id"] for i in c["items"]):
+                continue
             if similar(tok, c["tokens"]):
                 c["items"].append(it)
-                c["tokens"] |= tok
                 break
         else:
-            clusters.append({"tokens": set(tok), "items": [it]})
+            clusters.append({"tokens": tok, "items": [it]})
     return clusters
 
 
@@ -132,7 +140,7 @@ def rebuild(db, sources, window_hours=48, now=None):
     since = (now - timedelta(hours=window_hours)).isoformat()
     items = [dict(r) for r in db.execute("SELECT * FROM items WHERE published >= ?", (since,))]
     events = []
-    for c in cluster(items):
+    for c in cluster(items, {sid for sid, s in sources.items() if s.get("distinct_items")}):
         ev = score(c["items"], sources)
         if ev is None:
             continue

@@ -2,6 +2,7 @@
 import html
 import json
 from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 
 REGION_ORDER = ["Global", "Europe", "Middle East", "Africa", "Asia", "Americas", "Oceania"]
 
@@ -18,10 +19,11 @@ def gather(db, sources, now=None, hours=24, limit=25):
     return events
 
 
-def build(db, sources, now=None):
+def build(db, sources, now=None, tz="UTC"):
     now = now or datetime.now(timezone.utc)
+    local = now.astimezone(ZoneInfo(tz))
     events = [e for e in gather(db, sources, now) if e["score"] >= 15]  # drop routine noise
-    title = f"Global Intelligence Briefing - {now:%A %d %B %Y}"
+    title = f"Global Intelligence Briefing - {local:%A %d %B %Y}"
     key = [e for e in events if e["score"] >= 60][:5]
 
     text = [title, "", "KEY JUDGEMENTS"]
@@ -45,6 +47,6 @@ def build(db, sources, now=None):
 h1{{font-size:22px;border-bottom:3px solid #0b3d91;padding-bottom:6px}}h2{{color:#0b3d91;font-size:16px;text-transform:uppercase;letter-spacing:.06em;margin-top:28px}}
 .ev{{border-left:3px solid #c9d3e3;padding-left:12px;margin:12px 0}}.ev h3{{font-size:16px;margin:2px 0}}.meta{{font:12px system-ui;color:#5b6573}}
 .key{{background:#f2f5fa;padding:10px 14px 10px 32px}}a{{color:#0b3d91}}</style>
-<h1>{esc(title)}</h1><div class=meta>Classification: OPEN SOURCE &middot; Compiled {now:%H:%M UTC} from verified sources only</div>
+<h1>{esc(title)}</h1><div class=meta>Classification: OPEN SOURCE &middot; Compiled {local:%H:%M %Z} from verified sources only</div>
 <h2>Key judgements</h2><ol class=key>{keys}</ol>{sections}"""
     return title, "\n".join(text), page

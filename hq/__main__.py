@@ -11,7 +11,7 @@ a = p.parse_args()
 cfg, src = app.load(a.config)
 if a.command == "briefing":
     db = store.connect(str(app.ROOT / cfg["db_path"]))
-    print(briefing.build(db, app.source_index(src))[1])
+    print(briefing.build(db, app.source_index(src), tz=cfg["briefing"]["timezone"])[1])
 elif a.command == "export":
     app.export(store.connect(str(app.ROOT / cfg["db_path"])), cfg, src, a.out)
     print(f"static site written to {a.out}")

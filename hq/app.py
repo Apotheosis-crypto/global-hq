@@ -66,11 +66,15 @@ def cycle(db, cfg, src, fetcher=feeds.fetch, now=None):
     return fired
 
 
+BRIEFING_WINDOW_MINUTES = 180  # a late or missed run still sends; a deploy at 8pm does not
+
+
 def briefing_due(cfg, now):
     tz = ZoneInfo(cfg["briefing"]["timezone"])
     local = now.astimezone(tz)
     hh, mm = map(int, cfg["briefing"]["time"].split(":"))
-    return (local.hour, local.minute) >= (hh, mm), local.date().isoformat()
+    minutes_past = (local.hour * 60 + local.minute) - (hh * 60 + mm)
+    return 0 <= minutes_past < BRIEFING_WINDOW_MINUTES, local.date().isoformat()
 
 
 def maybe_send_briefing(db, cfg, src, now=None):
@@ -81,7 +85,7 @@ def maybe_send_briefing(db, cfg, src, now=None):
     with LOCK:
         if not store.mark_sent(db, "briefing", day, now.isoformat()):
             return False
-        title, text, page = briefing.build(db, source_index(src), now)
+        title, text, page = briefing.build(db, source_index(src), now, cfg["briefing"]["timezone"])
     (ROOT / "briefings").mkdir(exist_ok=True)
     (ROOT / "briefings" / f"{day}.html").write_text(page)
     notify.send(cfg, title, text, html_body=page)
@@ -108,7 +112,7 @@ def serve(db, cfg, src):
                     events, health = api_payloads(db, cfg, sources)
                     return self._send(json.dumps(events if "events" in self.path else health))
                 if self.path in ("/briefing", "/briefing/"):
-                    return self._send(briefing.build(db, sources)[2], "text/html")
+                    return self._send(briefing.build(db, sources, tz=cfg["briefing"]["timezone"])[2], "text/html")
             if self.path in ("/", "/index.html"):
                 return self._send(DASHBOARD.read_bytes(), "text/html")
             self.send_error(404)
@@ -137,7 +141,7 @@ def export(db, cfg, src, out):
     events, health = api_payloads(db, cfg, sources)
     (out / "api" / "events.json").write_text(json.dumps(events))
     (out / "api" / "health.json").write_text(json.dumps(health))
-    (out / "briefing" / "index.html").write_text(briefing.build(db, sources)[2])
+    (out / "briefing" / "index.html").write_text(briefing.build(db, sources, tz=cfg["briefing"]["timezone"])[2])
     (out / "index.html").write_bytes(DASHBOARD.read_bytes())
     archive = ROOT / "briefings"
     if archive.exists():
